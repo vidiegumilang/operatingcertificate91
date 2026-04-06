@@ -13,5 +13,45 @@
                 <h1 class="logo">✈️ Jadwal Penerbangan Sekolah</h1>
                 <div class="nav-links">
                     <a href="index.html" class="nav-link active">Jadwal</a>
-                    <a href
-
+                    <a href="admin.html" class="nav-link">Admin Panel</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section class="search-section">
+                <div class="search-container">
+                    <h2>Jadwal Penerbangan</h2>
+                    <div class="date-selector">
+                        <label for="selectedDate">Pilih Tanggal:</label>
+                        <input type="date" id="selectedDate">
+                    </div>
+                </div>
+            </section>
+
+            <section class="schedule-section">
+                <div id="scheduleContainer" class="schedule-container">
+                    <!-- Schedule tabel akan dimuat di sini -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedDate = document.getElementById('selectedDate');
+            
+            // Set default date ke hari ini
+            const today = new Date().toISOString().split('T')[0];
+            selectedDate.value = today;
+            
+            loadSchedule(today);
+
+            selectedDate.addEventListener('change', function() {
+                loadSchedule(this.value);
+            });
+        });
+    </script>
+</body>
+</html>
