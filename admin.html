@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Admin - Jadwal Penerbangan</title>
+    <style>
+        .admin-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .btn-delete {
+            background: var(--danger-color);
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1 class="logo">✈️ Jadwal Penerbangan Sekolah</h1>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Jadwal</a>
+                    <a href="admin.html" class="nav-link active">Admin Panel</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section class="admin-form">
+                <h2>Tambah Penerbangan Baru</h2>
+                <form id="flightForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nomor Penerbangan</label>
+                            <input type="text" id="flightNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Dari</label>
+                            <input type="text" id="from" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ke</label>
+                            <input type="text" id="to" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jam Berangkat</label>
+                            <input type="time" id="departureTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jam Tiba</label>
+                            <input type="time" id="arrivalTime" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Tambah Penerbangan</button>
+                </form>
+            </section>
+
+            <section>
+                <h2 style="color: white; margin-bottom: 20px;">Daftar Penerbangan</h2>
+                <table id="flightsTable">
+                    <thead>
+                        <tr>
+                            <th>No. Penerbangan</th>
+                            <th>Dari</th>
+                            <th>Ke</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const flightForm = document.getElementById('flightForm');
+
+        flightForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const flight = {
+                flightNumber: document.getElementById('flightNumber').value,
+                from: document.getElementById('from').value,
+                to: document.getElementById('to').value,
+                date: document.getElementById('date').value,
+                departureTime: document.getElementById('departureTime').value,
+                arrivalTime: document.getElementById('arrivalTime').value,
+                aircraft: 'Boeing 737',
+                seats: '150',
+                status: 'Tepat Waktu'
+            };
+            
+            const flights = getFlights();
+            flight.id = Math.max(...flights.map(f => f.id), 0) + 1;
+            flights.push(flight);
+            localStorage.setItem('flights', JSON.stringify(flights));
+            
+            flightForm.reset();
+            loadTable();
+            alert('Penerbangan berhasil ditambahkan!');
+        });
+
+        function loadTable() {
+            const flights = getFlights();
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = flights.map(flight => `
+                <tr>
+                    <td>${flight.flightNumber}</td>
+                    <td>${flight.from}</td>
+                    <td>${flight.to}</td>
+                    <td>${flight.date}</td>
+                    <td><button class="btn-delete" onclick="deleteFlight(${flight.id})">Hapus</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteFlight(id) {
+            if (confirm('Yakin ingin menghapus?')) {
+                const flights = getFlights().filter(f => f.id !== id);
+                localStorage.setItem('flights', JSON.stringify(flights));
+                loadTable();
+            }
+        }
+
+        window.addEventListener('load', loadTable);
+    </script>
+</body>
+</html>
