@@ -1,118 +1,107 @@
-const sampleFlights = [
-    {
-        id: 1,
-        flightNumber: "SD-101",
-        from: "Jakarta",
-        to: "Surabaya",
-        date: "2026-04-06",
-        departureTime: "08:00",
-        arrivalTime: "10:30",
-        aircraft: "Boeing 737",
-        seats: "150",
-        status: "Tepat Waktu"
-    },
-    {
-        id: 2,
-        flightNumber: "SD-202",
-        from: "Bandung",
-        to: "Yogyakarta",
-        date: "2026-04-06",
-        departureTime: "10:15",
-        arrivalTime: "12:00",
-        aircraft: "Airbus A320",
-        seats: "180",
-        status: "Tepat Waktu"
-    }
+// Time periods definition
+const timePeriods = [
+    { name: 'Pagi (06:00 - 12:00)', class: 'morning', start: '06:00', end: '12:00' },
+    { name: 'Siang (12:00 - 18:00)', class: 'afternoon', start: '12:00', end: '18:00' },
+    { name: 'Malam (18:00 - 00:00)', class: 'evening', start: '18:00', end: '00:00' },
+    { name: 'Tengah Malam (00:00 - 06:00)', class: 'night', start: '00:00', end: '06:00' }
 ];
 
-function initializeData() {
-    if (!localStorage.getItem('flights')) {
-        localStorage.setItem('flights', JSON.stringify(sampleFlights));
-    }
-}
-
-function getFlights() {
-    initializeData();
-    return JSON.parse(localStorage.getItem('flights')) || [];
-}
-
-function loadFlights() {
-    const flights = getFlights();
-    const flightsList = document.getElementById('flightsList');
+// Load schedule by date
+function loadSchedule(date) {
+    const flights = getFlights().filter(f => f.date === date);
+    const container = document.getElementById('scheduleContainer');
     
-    if (!flightsList) return;
-
+    // Format tanggal
+    const dateObj = new Date(date + 'T00:00:00');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = dateObj.toLocaleDateString('id-ID', options);
+    
+    let html = `<div class="schedule-date">${formattedDate}</div>`;
+    
+    // Tampilkan jadwal untuk setiap periode
+    timePeriods.forEach(period => {
+        const periodFlights = flights.filter(f => {
+            const time = f.departureTime;
+            return time >= period.start && time < period.end;
+        });
+        
+        html += createPeriodTable(period, periodFlights);
+    });
+    
     if (flights.length === 0) {
-        flightsList.innerHTML = '<p>Tidak ada jadwal penerbangan</p>';
-        return;
+        html += `<div style="padding: 40px; text-align: center; color: #999;">Tidak ada penerbangan pada tanggal ini</div>`;
     }
-
-    flightsList.innerHTML = flights.map(flight => `
-        <div class="flight-card">
-            <div class="card-header">
-                <div>${flight.flightNumber}</div>
-                <div class="flight-status">${flight.status}</div>
-            </div>
-            <div class="card-body">
-                <div class="flight-route"><strong>${flight.from}</strong> → <strong>${flight.to}</strong></div>
-                <div class="flight-info">
-                    <div>Berangkat: ${flight.departureTime}</div>
-                    <div>Tiba: ${flight.arrivalTime}</div>
-                </div>
-                <div>Tanggal: ${flight.date}</div>
-                <div>Pesawat: ${flight.aircraft}</div>
-            </div>
-        </div>
-    `).join('');
+    
+    container.innerHTML = html;
 }
 
-function setupSearchFilters() {
-    const searchBtn = document.getElementById('searchBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function() {
-            const date = document.getElementById('searchDate').value;
-            const route = document.getElementById('searchRoute').value;
-            
-            const flights = getFlights();
-            const filtered = flights.filter(flight => {
-                const dateMatch = !date || flight.date === date;
-                const routeMatch = !route || 
-                    flight.from.toLowerCase().includes(route.toLowerCase()) ||
-                    flight.to.toLowerCase().includes(route.toLowerCase());
-                return dateMatch && routeMatch;
-            });
-
-            const flightsList = document.getElementById('flightsList');
-            if (filtered.length === 0) {
-                flightsList.innerHTML = '<p>Tidak ada hasil pencarian</p>';
-            } else {
-                flightsList.innerHTML = filtered.map(flight => `
-                    <div class="flight-card">
-                        <div class="card-header">
-                            <div>${flight.flightNumber}</div>
-                            <div class="flight-status">${flight.status}</div>
-                        </div>
-                        <div class="card-body">
-                            <div class="flight-route"><strong>${flight.from}</strong> → <strong>${flight.to}</strong></div>
-                            <div class="flight-info">
-                                <div>Berangkat: ${flight.departureTime}</div>
-                                <div>Tiba: ${flight.arrivalTime}</div>
-                            </div>
-                            <div>Tanggal: ${flight.date}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
+// Create table for time period
+function createPeriodTable(period, flights) {
+    let html = `
+        <div class="time-period">
+            <div class="period-header ${period.class}">
+                <span>${period.name}</span>
+                <span>${flights.length} penerbangan</span>
+            </div>
+            <table class="flights-table">
+                <thead>
+                    <tr>
+                        <th>Nomor</th>
+                        <th>Rute</th>
+                        <th>Dari</th>
+                        <th>Tujuan</th>
+                        <th>Berangkat</th>
+                        <th>Tiba</th>
+                        <th>Pesawat</th>
+                        <th>Kursi</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+    
+    if (flights.length === 0) {
+        html += `
+                    <tr class="flight-row">
+                        <td colspan="9" class="empty-slot">Tidak ada penerbangan</td>
+                    </tr>
+        `;
+    } else {
+        flights.forEach(flight => {
+            html += `
+                    <tr class="flight-row">
+                        <td class="flight-num">${flight.flightNumber}</td>
+                        <td class="flight-route">${flight.from} → ${flight.to}</td>
+                        <td>${flight.from}</td>
+                        <td>${flight.to}</td>
+                        <td class="flight-time">${flight.departureTime}</td>
+                        <td class="flight-time">${flight.arrivalTime}</td>
+                        <td>${flight.aircraft}</td>
+                        <td class="flight-seat">${flight.seats}</td>
+                        <td>
+                            <span class="status-badge status-${getStatusClass(flight.status).replace('status-', '')}">
+                                ${flight.status}
+                            </span>
+                        </td>
+                    </tr>
+            `;
         });
     }
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    return html;
+}
 
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function() {
-            document.getElementById('searchDate').value = '';
-            document.getElementById('searchRoute').value = '';
-            loadFlights();
-        });
-    }
+function getStatusClass(status) {
+    const statusMap = {
+        'Tepat Waktu': 'status-ontime',
+        'Tertunda': 'status-delayed',
+        'Selesai': 'status-completed'
+    };
+    return statusMap[status] || 'status-ontime';
 }
