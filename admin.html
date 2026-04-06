@@ -1,195 +1,725 @@
-/* Date Selector */
-.date-selector {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Admin - Jadwal Penerbangan Sekolah</title>
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-.date-selector label {
-    font-weight: 600;
-    color: var(--text-dark);
-}
+        .admin-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
 
-.date-selector input {
-    padding: 10px 15px;
-    border: 2px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 14px;
-}
+        .admin-section {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-.date-selector input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
+        .admin-section h2 {
+            margin-bottom: 25px;
+            color: var(--text-dark);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
 
-/* Schedule Container */
-.schedule-container {
-    background: var(--white);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-}
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-.schedule-date {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--white);
-    padding: 20px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: 700;
-}
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
 
-/* Time Period */
-.time-period {
-    border-bottom: 3px solid var(--primary-color);
-    margin-bottom: 0;
-}
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
 
-.period-header {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-    color: var(--white);
-    padding: 15px 20px;
-    font-weight: 700;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
 
-.period-header.morning {
-    background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
-}
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
 
-.period-header.afternoon {
-    background: linear-gradient(135deg, #4ECDC4, #44A08D);
-}
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
 
-.period-header.evening {
-    background: linear-gradient(135deg, #A8EDEA, #FED6E3);
-}
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
 
-.period-header.night {
-    background: linear-gradient(135deg, #2C3E50, #34495E);
-    color: var(--white);
-}
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            width: 100%;
+        }
 
-/* Flight Table */
-.flights-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+        }
 
-.flights-table thead {
-    background: #f8f9fa;
-    border-bottom: 2px solid var(--border-color);
-}
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--text-dark);
+            padding: 6px 12px;
+            font-size: 12px;
+        }
 
-.flights-table th {
-    padding: 15px;
-    text-align: center;
-    font-weight: 600;
-    color: var(--text-dark);
-    font-size: 13px;
-    text-transform: uppercase;
-    border-right: 1px solid var(--border-color);
-}
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+            padding: 6px 12px;
+            font-size: 12px;
+        }
 
-.flights-table th:last-child {
-    border-right: none;
-}
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-.flights-table td {
-    padding: 12px 15px;
-    text-align: center;
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    font-size: 13px;
-}
+        .data-table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+        }
 
-.flights-table td:last-child {
-    border-right: none;
-}
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
 
-.flight-row:hover {
-    background: #f8f9fa;
-}
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
 
-/* Flight Info Cells */
-.flight-num {
-    font-weight: 700;
-    color: var(--primary-color);
-}
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
 
-.flight-route {
-    font-weight: 600;
-    color: var(--text-dark);
-}
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
 
-.flight-time {
-    font-weight: 600;
-    color: var(--text-dark);
-}
+        /* Alert */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 13px;
+        }
 
-.flight-seat {
-    background: #e3f2fd;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-weight: 600;
-    color: #1976d2;
-}
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
 
-/* Status Badge */
-.status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-}
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
 
-.status-ontime {
-    background: #d4edda;
-    color: #155724;
-}
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
 
-.status-delayed {
-    background: #fff3cd;
-    color: #856404;
-}
+        /* Tab Navigation */
+        .tab-container {
+            margin-bottom: 30px;
+        }
 
-.status-completed {
-    background: #d1ecf1;
-    color: #0c5460;
-}
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
 
-.empty-slot {
-    color: #999;
-    font-style: italic;
-}
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .schedule-container {
-        overflow-x: auto;
-    }
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
 
-    .flights-table {
-        font-size: 11px;
-    }
+        .tab-content {
+            display: none;
+        }
 
-    .flights-table th,
-    .flights-table td {
-        padding: 8px 5px;
-    }
+        .tab-content.active {
+            display: block;
+        }
 
-    .period-header {
-        flex-direction: column;
-        gap: 5px;
-    }
+        /* Responsive */
+        @media (max-width: 968px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .date-selector {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
+        @media (max-width: 768px) {
+            .admin-section {
+                padding: 20px;
+            }
+
+            .data-table {
+                font-size: 11px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-instructor {
+            background: #e7f3ff;
+            color: #0066cc;
+        }
+
+        .badge-student {
+            background: #ffe7f0;
+            color: #cc0066;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1 class="logo">✈️ Jadwal Penerbangan Sekolah</h1>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Jadwal</a>
+                    <a href="admin.html" class="nav-link active">Admin Panel</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('flights')">📅 Penerbangan</button>
+                    <button class="tab-btn" onclick="switchTab('instructors')">👨‍✈️ Instruktur</button>
+                    <button class="tab-btn" onclick="switchTab('students')">👨‍🎓 Siswa</button>
+                </div>
+            </div>
+
+            <!-- TAB 1: FLIGHTS -->
+            <div id="flights-tab" class="tab-content active">
+                <div class="admin-content">
+                    <!-- Tambah Penerbangan -->
+                    <div class="admin-section">
+                        <h2>➕ Tambah Penerbangan Baru</h2>
+                        <div id="flightAlert" class="alert"></div>
+                        <form id="flightForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="flightNumber">Nomor Penerbangan *</label>
+                                    <input type="text" id="flightNumber" placeholder="Cth: SD-101" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="from">Dari *</label>
+                                    <input type="text" id="from" placeholder="Jakarta" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="to">Ke *</label>
+                                    <input type="text" id="to" placeholder="Surabaya" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date">Tanggal *</label>
+                                    <input type="date" id="date" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="departureTime">Jam Berangkat *</label>
+                                    <input type="time" id="departureTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="arrivalTime">Jam Tiba *</label>
+                                    <input type="time" id="arrivalTime" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="aircraft">Jenis Pesawat *</label>
+                                    <input type="text" id="aircraft" placeholder="Boeing 737" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="seats">Jumlah Kursi *</label>
+                                    <input type="number" id="seats" placeholder="150" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="instructor">Instruktur *</label>
+                                    <select id="instructor" required>
+                                        <option value="">-- Pilih Instruktur --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="status">Status *</label>
+                                    <select id="status" required>
+                                        <option value="Tepat Waktu">Tepat Waktu</option>
+                                        <option value="Tertunda">Tertunda</option>
+                                        <option value="Selesai">Selesai</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notes">Catatan</label>
+                                <textarea id="notes" placeholder="Masukkan catatan penerbangan..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Tambah Penerbangan</button>
+                        </form>
+                    </div>
+
+                    <!-- Daftar Penerbangan -->
+                    <div class="admin-section">
+                        <h2>📋 Daftar Penerbangan</h2>
+                        <table class="data-table" id="flightsTable">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Rute</th>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Instruktur</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="flightsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: INSTRUCTORS -->
+            <div id="instructors-tab" class="tab-content">
+                <div class="admin-content">
+                    <!-- Tambah Instruktur -->
+                    <div class="admin-section">
+                        <h2>➕ Tambah Instruktur</h2>
+                        <div id="instructorAlert" class="alert"></div>
+                        <form id="instructorForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="instructorName">Nama Instruktur *</label>
+                                    <input type="text" id="instructorName" placeholder="Nama lengkap" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="instructorEmail">Email *</label>
+                                    <input type="email" id="instructorEmail" placeholder="email@sekolah.com" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="instructorPhone">Nomor HP</label>
+                                    <input type="tel" id="instructorPhone" placeholder="08xxxxxxxxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label for="instructorSpecialization">Spesialisasi</label>
+                                    <input type="text" id="instructorSpecialization" placeholder="Cth: Pilot, Co-Pilot">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="instructorNotes">Catatan</label>
+                                <textarea id="instructorNotes" placeholder="Informasi tambahan..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Tambah Instruktur</button>
+                        </form>
+                    </div>
+
+                    <!-- Daftar Instruktur -->
+                    <div class="admin-section">
+                        <h2>👨‍✈️ Daftar Instruktur</h2>
+                        <table class="data-table" id="instructorsTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Spesialisasi</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="instructorsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: STUDENTS -->
+            <div id="students-tab" class="tab-content">
+                <div class="admin-content">
+                    <!-- Tambah Siswa -->
+                    <div class="admin-section">
+                        <h2>➕ Tambah Siswa</h2>
+                        <div id="studentAlert" class="alert"></div>
+                        <form id="studentForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentName">Nama Siswa *</label>
+                                    <input type="text" id="studentName" placeholder="Nama lengkap" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentNIM">NIM / Nomor Induk *</label>
+                                    <input type="text" id="studentNIM" placeholder="NIM" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentClass">Kelas *</label>
+                                    <input type="text" id="studentClass" placeholder="X-1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentEmail">Email</label>
+                                    <input type="email" id="studentEmail" placeholder="email@sekolah.com">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="studentPhone">Nomor HP</label>
+                                    <input type="tel" id="studentPhone" placeholder="08xxxxxxxxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label for="studentStatus">Status</label>
+                                    <select id="studentStatus">
+                                        <option value="Aktif">Aktif</option>
+                                        <option value="Tidak Aktif">Tidak Aktif</option>
+                                        <option value="Lulus">Lulus</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Tambah Siswa</button>
+                        </form>
+                    </div>
+
+                    <!-- Daftar Siswa -->
+                    <div class="admin-section">
+                        <h2>👨‍🎓 Daftar Siswa</h2>
+                        <table class="data-table" id="studentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>NIM</th>
+                                    <th>Kelas</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // ==================== TAB SWITCHING ====================
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data when tab is opened
+            if (tabName === 'flights') loadFlightsTable();
+            if (tabName === 'instructors') loadInstructorsTable();
+            if (tabName === 'students') loadStudentsTable();
+        }
+
+        // ==================== FLIGHTS ====================
+        const flightForm = document.getElementById('flightForm');
+        flightForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const flight = {
+                flightNumber: document.getElementById('flightNumber').value,
+                from: document.getElementById('from').value,
+                to: document.getElementById('to').value,
+                date: document.getElementById('date').value,
+                departureTime: document.getElementById('departureTime').value,
+                arrivalTime: document.getElementById('arrivalTime').value,
+                aircraft: document.getElementById('aircraft').value,
+                seats: document.getElementById('seats').value,
+                instructor: document.getElementById('instructor').value,
+                status: document.getElementById('status').value,
+                notes: document.getElementById('notes').value
+            };
+
+            // Validate times
+            if (flight.departureTime >= flight.arrivalTime) {
+                showAlert('flightAlert', 'Jam tiba harus lebih besar dari jam berangkat!', 'error');
+                return;
+            }
+
+            addFlight(flight);
+            flightForm.reset();
+            document.getElementById('date').valueAsDate = new Date();
+            loadFlightsTable();
+            showAlert('flightAlert', 'Penerbangan berhasil ditambahkan!', 'success');
+        });
+
+        function loadFlightsTable() {
+            const flights = getFlights();
+            const body = document.getElementById('flightsBody');
+            
+            if (flights.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Tidak ada data</td></tr>';
+                return;
+            }
+
+            body.innerHTML = flights.map((flight, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${flight.from}</strong> → <strong>${flight.to}</strong></td>
+                    <td>${flight.date}</td>
+                    <td>${flight.departureTime} - ${flight.arrivalTime}</td>
+                    <td><span class="badge badge-instructor">${flight.instructor || '-'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="editFlight(${flight.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteFlightConfirm(${flight.id})">Hapus</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteFlightConfirm(id) {
+            if (confirm('Yakin ingin menghapus penerbangan ini?')) {
+                deleteFlight(id);
+                loadFlightsTable();
+                showAlert('flightAlert', 'Penerbangan berhasil dihapus!', 'success');
+            }
+        }
+
+        // ==================== INSTRUCTORS ====================
+        const instructorForm = document.getElementById('instructorForm');
+        instructorForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const instructor = {
+                name: document.getElementById('instructorName').value,
+                email: document.getElementById('instructorEmail').value,
+                phone: document.getElementById('instructorPhone').value,
+                specialization: document.getElementById('instructorSpecialization').value,
+                notes: document.getElementById('instructorNotes').value
+            };
+
+            addInstructor(instructor);
+            instructorForm.reset();
+            loadInstructorsTable();
+            loadInstructorSelect();
+            showAlert('instructorAlert', 'Instruktur berhasil ditambahkan!', 'success');
+        });
+
+        function loadInstructorsTable() {
+            const instructors = getInstructors();
+            const body = document.getElementById('instructorsBody');
+            
+            if (instructors.length === 0) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Tidak ada data</td></tr>';
+                return;
+            }
+
+            body.innerHTML = instructors.map(instructor => `
+                <tr>
+                    <td><strong>${instructor.name}</strong></td>
+                    <td>${instructor.email}</td>
+                    <td>${instructor.specialization || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger" onclick="deleteInstructorConfirm(${instructor.id})">Hapus</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteInstructorConfirm(id) {
+            if (confirm('Yakin ingin menghapus instruktur ini?')) {
+                deleteInstructor(id);
+                loadInstructorsTable();
+                loadInstructorSelect();
+                showAlert('instructorAlert', 'Instruktur berhasil dihapus!', 'success');
+            }
+        }
+
+        // ==================== STUDENTS ====================
+        const studentForm = document.getElementById('studentForm');
+        studentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const student = {
+                name: document.getElementById('studentName').value,
+                nim: document.getElementById('studentNIM').value,
+                class: document.getElementById('studentClass').value,
+                email: document.getElementById('studentEmail').value,
+                phone: document.getElementById('studentPhone').value,
+                status: document.getElementById('studentStatus').value
+            };
+
+            addStudent(student);
+            studentForm.reset();
+            loadStudentsTable();
+            showAlert('studentAlert', 'Siswa berhasil ditambahkan!', 'success');
+        });
+
+        function loadStudentsTable() {
+            const students = getStudents();
+            const body = document.getElementById('studentsBody');
+            
+            if (students.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">Tidak ada data</td></tr>';
+                return;
+            }
+
+            body.innerHTML = students.map(student => `
+                <tr>
+                    <td><strong>${student.name}</strong></td>
+                    <td>${student.nim}</td>
+                    <td>${student.class}</td>
+                    <td><span class="badge badge-student">${student.status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger" onclick="deleteStudentConfirm(${student.id})">Hapus</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteStudentConfirm(id) {
+            if (confirm('Yakin ingin menghapus siswa ini?')) {
+                deleteStudent(id);
+                loadStudentsTable();
+                showAlert('studentAlert', 'Siswa berhasil dihapus!', 'success');
+            }
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            setTimeout(() => {
+                alert.className = 'alert';
+            }, 3000);
+        }
+
+        function loadInstructorSelect() {
+            const instructors = getInstructors();
+            const select = document.getElementById('instructor');
+            select.innerHTML = '<option value="">-- Pilih Instruktur --</option>' +
+                instructors.map(i => `<option value="${i.name}">${i.name} (${i.specialization})</option>`).join('');
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFlightsTable();
+            loadInstructorsTable();
+            loadStudentsTable();
+            loadInstructorSelect();
+            document.getElementById('date').valueAsDate = new Date();
+        });
+    </script>
+</body>
+</html>
